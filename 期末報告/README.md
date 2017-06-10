@@ -1,8 +1,8 @@
 台灣各地區登革熱分析
 ================
 
-讀入台灣登革熱資料
-------------------
+讀入資料
+--------
 
 ``` r
 #這是R Code Chunk
@@ -12,11 +12,119 @@ library(readr)
     ## Warning: package 'readr' was built under R version 3.3.3
 
 ``` r
-Age_County_Gender_061 <- read.csv("C:/Users/user/Downloads/Age_County_Gender_061.csv",fileEncoding = "big5")
+#99~106年高雄登革熱資料
+MosIndex_Kaohsiung <- read_csv("C:/Users/user/Downloads/MosIndex_Kaohsiung.csv")
 ```
 
-資料處理與清洗
---------------
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_integer(),
+    ##   Date = col_date(format = ""),
+    ##   County = col_character(),
+    ##   Town = col_character(),
+    ##   Village = col_character(),
+    ##   VillageID = col_character(),
+    ##   VillageLon = col_double(),
+    ##   VillageLat = col_double(),
+    ##   AreaType = col_character(),
+    ##   InspectType = col_character(),
+    ##   BI = col_double(),
+    ##   AIAeg = col_double(),
+    ##   AIAlb = col_double(),
+    ##   HI = col_double(),
+    ##   HIAeg = col_double(),
+    ##   CI = col_double(),
+    ##   LI = col_double(),
+    ##   AI = col_double(),
+    ##   Con100HH = col_double()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+#104年高雄各地區各月份病例資料
+X104dengueinfection <- read_csv("C:/Users/user/Downloads/104dengueinfection.csv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   行政區 = col_character(),
+    ##   `1月` = col_integer(),
+    ##   `2月` = col_integer(),
+    ##   `3月` = col_integer(),
+    ##   `4月` = col_integer(),
+    ##   `5月` = col_integer(),
+    ##   `6月` = col_integer(),
+    ##   `7月` = col_integer(),
+    ##   `8月` = col_integer(),
+    ##   `9月` = col_integer(),
+    ##   `10月` = col_integer(),
+    ##   `11月` = col_integer(),
+    ##   `12月` = col_integer(),
+    ##   總計 = col_integer()
+    ## )
+
+``` r
+#台南市、高雄市、屏東縣快篩診所資料
+ns1hosp_20160603 <- read_csv("C:/Users/user/Downloads/ns1hosp_20160603.csv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   city = col_character(),
+    ##   hospName = col_character(),
+    ##   hospID = col_character(),
+    ##   hospAddress = col_character(),
+    ##   lat = col_double(),
+    ##   lng = col_double(),
+    ##   hospTel = col_character()
+    ## )
+
+``` r
+#99~106年全台登革熱資料
+MosIndex_All <- read_csv("C:/Users/user/Downloads/MosIndex_All.csv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_integer(),
+    ##   Date = col_date(format = ""),
+    ##   County = col_character(),
+    ##   Town = col_character(),
+    ##   Village = col_character(),
+    ##   VillageID = col_character(),
+    ##   VillageLon = col_character(),
+    ##   VillageLat = col_character(),
+    ##   AreaType = col_character(),
+    ##   InspectType = col_character(),
+    ##   BI = col_double(),
+    ##   AIAeg = col_double(),
+    ##   AIAlb = col_double(),
+    ##   HI = col_double(),
+    ##   HIAeg = col_double(),
+    ##   CI = col_double(),
+    ##   LI = col_double(),
+    ##   AI = col_double(),
+    ##   Con100HH = col_double()
+    ## )
+    ## See spec(...) for full column specifications.
+
+``` r
+#104年全台各鄉鎮市區人口密度
+opendata104N010 <- read_csv("C:/Users/user/Downloads/opendata104N010.csv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   statistic_yyy = col_character(),
+    ##   site_id = col_character(),
+    ##   people_total = col_character(),
+    ##   area = col_character(),
+    ##   population_density = col_character()
+    ## )
+
+資料處理與清洗、資料視覺化(99~106年全台登革熱資料)
+--------------------------------------------------
 
 ``` r
 #這是R Code Chunk
@@ -37,241 +145,415 @@ library(dplyr)
     ##     intersect, setdiff, setequal, union
 
 ``` r
-Age_County_Gender_061F<-Age_County_Gender_061[grepl("F",Age_County_Gender_061$性別),]
-Age_County_Gender_061F<-select(Age_County_Gender_061F,發病年份:確定病例數,-是否為境外移入)
-Age_County_Gender_061F<-rename(Age_County_Gender_061F,女生=性別)
-Age_County_Gender_061M<-Age_County_Gender_061[grepl("M",Age_County_Gender_061$性別),]
-Age_County_Gender_061M<-select(Age_County_Gender_061M,發病年份:確定病例數,-是否為境外移入)
-Age_County_Gender_061M<-rename(Age_County_Gender_061M,男生=性別)
-a<-full_join(Age_County_Gender_061F,Age_County_Gender_061M,by=c("發病年份","發病月份","縣市","鄉鎮","年齡層"))
-
-knitr::kable(head(Age_County_Gender_061F,50))
+MosIndex_Allc<-select(MosIndex_All,Date:AreaType)
+MosIndex_Allc<-MosIndex_Allc[complete.cases(MosIndex_Allc),]
+MosIndex_Allc$VillageLon<-as.numeric(MosIndex_Allc$VillageLon)
 ```
 
-|     | 發病年份 | 發病月份 | 縣市   | 鄉鎮   | 女生 | 年齡層 | 確定病例數 |
-|-----|:--------:|:--------:|:-------|:-------|:-----|:-------|:----------:|
-| 3   |   2003   |    11    | 高雄市 | 三民區 | F    | 45-49  |      1     |
-| 5   |   2004   |    11    | 屏東縣 | 屏東市 | F    | 5-9    |      1     |
-| 6   |   2004   |    12    | 屏東縣 | 屏東市 | F    | 25-29  |      1     |
-| 9   |   2005   |    11    | 花蓮縣 | 光復鄉 | F    | 30-34  |      1     |
-| 10  |   2005   |    11    | 高雄市 | 三民區 | F    | 40-44  |      2     |
-| 12  |   2006   |    10    | 台南市 | 南區   | F    | 45-49  |      2     |
-| 18  |   2006   |    11    | 高雄市 | 苓雅區 | F    | 55-59  |      1     |
-| 19  |   2006   |    11    | 高雄市 | 鼓山區 | F    | 65-69  |      1     |
-| 22  |   2006   |     4    | 嘉義市 | 西區   | F    | 60-64  |      1     |
-| 25  |   2006   |     7    | 高雄市 | 前鎮區 | F    | 15-19  |      2     |
-| 26  |   2006   |     7    | 高雄市 | 前鎮區 | F    | 20-24  |      2     |
-| 27  |   2006   |     8    | 高雄市 | 前鎮區 | F    | 50-54  |      3     |
-| 28  |   2007   |     1    | 桃園市 | 楊梅區 | F    | 45-49  |      1     |
-| 32  |   2007   |    11    | 台南市 | 安南區 | F    | 55-59  |      2     |
-| 34  |   2007   |    12    | 台南市 | 北區   | F    | 50-54  |      1     |
-| 36  |   2007   |    12    | 台南市 | 安南區 | F    | 35-39  |      1     |
-| 40  |   2007   |     9    | 台南市 | 中西區 | F    | 5-9    |      1     |
-| 42  |   2008   |     1    | 台南市 | 南區   | F    | 30-34  |      1     |
-| 44  |   2008   |    10    | 高雄市 | 楠梓區 | F    | 55-59  |      1     |
-| 48  |   2008   |     3    | 新北市 | 林口區 | F    | 5-9    |      1     |
-| 49  |   2008   |     8    | 高雄市 | 楠梓區 | F    | 65-69  |      2     |
-| 50  |   2008   |     9    | 台中市 | 太平區 | F    | 50-54  |      1     |
-| 51  |   2008   |     9    | 高雄市 | 鼓山區 | F    | 60-64  |      1     |
-| 52  |   2009   |     1    | 新北市 | 永和區 | F    | 35-39  |      1     |
-| 56  |   2009   |    12    | 台北市 | 萬華區 | F    | 25-29  |      1     |
-| 57  |   2009   |    12    | 屏東縣 | 內埔鄉 | F    | 40-44  |      1     |
-| 62  |   2009   |     4    | 台北市 | 松山區 | F    | 25-29  |      1     |
-| 66  |   2009   |     8    | 高雄市 | 小港區 | F    | 65-69  |      2     |
-| 68  |   2010   |    10    | 台南市 | 中西區 | F    | 40-44  |      2     |
-| 71  |   2010   |    10    | 台南市 | 南區   | F    | 55-59  |      1     |
-| 74  |   2010   |    10    | 高雄市 | 前金區 | F    | 5-9    |      1     |
-| 75  |   2010   |    10    | 高雄市 | 苓雅區 | F    | 40-44  |      2     |
-| 76  |   2010   |    10    | 高雄市 | 苓雅區 | F    | 45-49  |      1     |
-| 77  |   2010   |    10    | 高雄市 | 新興區 | F    | 40-44  |      2     |
-| 79  |   2010   |    11    | 台南市 | 東區   | F    | 50-54  |      1     |
-| 80  |   2010   |    11    | 台南市 | 新營區 | F    | 25-29  |      1     |
-| 82  |   2010   |    11    | 台南市 | 關廟區 | F    | 55-59  |      1     |
-| 84  |   2010   |    11    | 高雄市 | 楠梓區 | F    | 25-29  |      1     |
-| 86  |   2010   |    12    | 台南市 | 北區   | F    | 65-69  |      1     |
-| 88  |   2010   |    12    | 高雄市 | 旗津區 | F    | 40-44  |      1     |
-| 94  |   2010   |     8    | 台北市 | 松山區 | F    | 20-24  |      1     |
-| 97  |   2010   |     9    | 台南市 | 中西區 | F    | 40-44  |      1     |
-| 106 |   2004   |    12    | 屏東縣 | 屏東市 | F    | 50-54  |      2     |
-| 107 |   2004   |    12    | 高雄市 | 大寮區 | F    | 45-49  |      1     |
-| 108 |   2004   |     7    | 屏東縣 | 里港鄉 | F    | 30-34  |      1     |
-| 110 |   2005   |    11    | 高雄市 | 大寮區 | F    | 30-34  |      1     |
-| 113 |   2005   |     6    | 桃園市 | 平鎮區 | F    | 25-29  |      1     |
-| 119 |   2006   |    10    | 基隆市 | 信義區 | F    | 35-39  |      1     |
-| 122 |   2006   |    11    | 高雄市 | 苓雅區 | F    | 65-69  |      2     |
-| 123 |   2006   |    11    | 高雄市 | 鳳山區 | F    | 50-54  |      1     |
+    ## Warning: 強制變更過程中產生了 NA
 
 ``` r
-knitr::kable(head(Age_County_Gender_061M,50))
+MosIndex_Allc$VillageLat<-as.numeric(MosIndex_Allc$VillageLat)
 ```
 
-|     | 發病年份 | 發病月份 | 縣市   | 鄉鎮   | 男生 | 年齡層 | 確定病例數 |
-|-----|:--------:|:--------:|:-------|:-------|:-----|:-------|:----------:|
-| 1   |   2003   |     1    | 高雄市 | 楠梓區 | M    | 60-64  |      1     |
-| 2   |   2003   |    10    | 台北市 | 中正區 | M    | 40-44  |      1     |
-| 4   |   2004   |    10    | 屏東縣 | 屏東市 | M    | 70+    |      6     |
-| 7   |   2004   |    12    | 高雄市 | 大社區 | M    | 20-24  |      1     |
-| 8   |   2004   |     8    | 台北市 | 中山區 | M    | 35-39  |      1     |
-| 11  |   2005   |     8    | 高雄市 | 小港區 | M    | 30-34  |      1     |
-| 13  |   2006   |    10    | 高雄市 | 三民區 | M    | 40-44  |      3     |
-| 14  |   2006   |    10    | 高雄市 | 三民區 | M    | 45-49  |      2     |
-| 15  |   2006   |    10    | 高雄市 | 前鎮區 | M    | 15-19  |      4     |
-| 16  |   2006   |    10    | 高雄市 | 鳥松區 | M    | 35-39  |      1     |
-| 17  |   2006   |    11    | 高雄市 | 左營區 | M    | 35-39  |      1     |
-| 20  |   2006   |    12    | 高雄市 | 苓雅區 | M    | 65-69  |      1     |
-| 21  |   2006   |     3    | 台南市 | 善化區 | M    | 45-49  |      1     |
-| 23  |   2006   |     5    | 台北市 | 中正區 | M    | 30-34  |      1     |
-| 24  |   2006   |     7    | 高雄市 | 前金區 | M    | 15-19  |      2     |
-| 29  |   2007   |    10    | 台南市 | 中西區 | M    | 35-39  |      6     |
-| 30  |   2007   |    10    | 台南市 | 北區   | M    | 15-19  |      8     |
-| 31  |   2007   |    10    | 台南市 | 關廟區 | M    | 70+    |      2     |
-| 33  |   2007   |    11    | 高雄市 | 鳳山區 | M    | 10-14  |      2     |
-| 35  |   2007   |    12    | 台南市 | 北區   | M    | 5-9    |      2     |
-| 37  |   2007   |    12    | 台南市 | 安南區 | M    | 45-49  |      3     |
-| 38  |   2007   |    12    | 台南市 | 南區   | M    | 45-49  |      1     |
-| 39  |   2007   |     8    | 高雄市 | 前金區 | M    | 35-39  |      1     |
-| 41  |   2007   |     9    | 台南市 | 東區   | M    | 60-64  |      3     |
-| 43  |   2008   |    10    | 高雄市 | 前鎮區 | M    | 25-29  |      1     |
-| 45  |   2008   |    10    | 高雄市 | 鳳山區 | M    | 25-29  |      1     |
-| 46  |   2008   |    11    | 高雄市 | 鳳山區 | M    | 55-59  |      2     |
-| 47  |   2008   |     3    | 高雄市 | 楠梓區 | M    | 35-39  |      1     |
-| 53  |   2009   |    10    | 高雄市 | 前鎮區 | M    | 70+    |      4     |
-| 54  |   2009   |    11    | 屏東縣 | 長治鄉 | M    | 45-49  |      1     |
-| 55  |   2009   |    11    | 高雄市 | 三民區 | M    | 35-39  |      1     |
-| 58  |   2009   |    12    | 高雄市 | 前鎮區 | M    | 50-54  |      3     |
-| 59  |   2009   |    12    | 高雄市 | 苓雅區 | M    | 20-24  |      1     |
-| 60  |   2009   |    12    | 高雄市 | 苓雅區 | M    | 55-59  |      1     |
-| 61  |   2009   |     3    | 屏東縣 | 新園鄉 | M    | 20-24  |      1     |
-| 63  |   2009   |     6    | 彰化縣 | 二林鎮 | M    | 60-64  |      1     |
-| 64  |   2009   |     7    | 新北市 | 永和區 | M    | 10-14  |      1     |
-| 65  |   2009   |     8    | 台北市 | 松山區 | M    | 60-64  |      1     |
-| 67  |   2009   |     9    | 台北市 | 松山區 | M    | 25-29  |      1     |
-| 69  |   2010   |    10    | 台南市 | 永康區 | M    | 55-59  |      1     |
-| 70  |   2010   |    10    | 台南市 | 東區   | M    | 70+    |      1     |
-| 72  |   2010   |    10    | 台南市 | 關廟區 | M    | 25-29  |      2     |
-| 73  |   2010   |    10    | 台南市 | 關廟區 | M    | 60-64  |      2     |
-| 78  |   2010   |    11    | 台南市 | 中西區 | M    | 10-14  |      1     |
-| 81  |   2010   |    11    | 台南市 | 龍崎區 | M    | 45-49  |      1     |
-| 83  |   2010   |    11    | 高雄市 | 前鎮區 | M    | 50-54  |      2     |
-| 85  |   2010   |    11    | 高雄市 | 鳳山區 | M    | 30-34  |      4     |
-| 87  |   2010   |    12    | 台南市 | 關廟區 | M    | 65-69  |      1     |
-| 89  |   2010   |     5    | 苗栗縣 | 頭份市 | M    | 50-54  |      1     |
-| 90  |   2010   |     5    | 高雄市 | 大寮區 | M    | 40-44  |      1     |
+    ## Warning: 強制變更過程中產生了 NA
 
 ``` r
-knitr::kable(head(a,50))
+MosIndex_Allc2010<-MosIndex_Allc[grepl("2010",MosIndex_Allc$Date),]
+MosIndex_Allc2011<-MosIndex_Allc[grepl("2011",MosIndex_Allc$Date),]
+MosIndex_Allc2012<-MosIndex_Allc[grepl("2012",MosIndex_Allc$Date),]
+MosIndex_Allc2013<-MosIndex_Allc[grepl("2013",MosIndex_Allc$Date),]
+MosIndex_Allc2014<-MosIndex_Allc[grepl("2014",MosIndex_Allc$Date),]
+MosIndex_Allc2015<-MosIndex_Allc[grepl("2015",MosIndex_Allc$Date),]
+MosIndex_Allc2016<-MosIndex_Allc[grepl("2016",MosIndex_Allc$Date),]
+MosIndex_Allc2017<-MosIndex_Allc[grepl("2017",MosIndex_Allc$Date),]
+library(ggmap)
 ```
 
-| 發病年份 | 發病月份 | 縣市   | 鄉鎮   | 女生 | 年齡層 | 確定病例數.x | 男生 | 確定病例數.y |
-|:--------:|:--------:|:-------|:-------|:-----|:-------|:------------:|:-----|:------------:|
-|   2003   |    11    | 高雄市 | 三民區 | F    | 45-49  |       1      | NA   |      NA      |
-|   2004   |    11    | 屏東縣 | 屏東市 | F    | 5-9    |       1      | M    |       1      |
-|   2004   |    12    | 屏東縣 | 屏東市 | F    | 25-29  |       1      | NA   |      NA      |
-|   2005   |    11    | 花蓮縣 | 光復鄉 | F    | 30-34  |       1      | NA   |      NA      |
-|   2005   |    11    | 高雄市 | 三民區 | F    | 40-44  |       2      | M    |       1      |
-|   2006   |    10    | 台南市 | 南區   | F    | 45-49  |       2      | NA   |      NA      |
-|   2006   |    11    | 高雄市 | 苓雅區 | F    | 55-59  |       1      | NA   |      NA      |
-|   2006   |    11    | 高雄市 | 鼓山區 | F    | 65-69  |       1      | NA   |      NA      |
-|   2006   |     4    | 嘉義市 | 西區   | F    | 60-64  |       1      | NA   |      NA      |
-|   2006   |     7    | 高雄市 | 前鎮區 | F    | 15-19  |       2      | M    |       2      |
-|   2006   |     7    | 高雄市 | 前鎮區 | F    | 20-24  |       2      | M    |       1      |
-|   2006   |     8    | 高雄市 | 前鎮區 | F    | 50-54  |       3      | NA   |      NA      |
-|   2007   |     1    | 桃園市 | 楊梅區 | F    | 45-49  |       1      | NA   |      NA      |
-|   2007   |    11    | 台南市 | 安南區 | F    | 55-59  |       2      | M    |       3      |
-|   2007   |    12    | 台南市 | 北區   | F    | 50-54  |       1      | NA   |      NA      |
-|   2007   |    12    | 台南市 | 安南區 | F    | 35-39  |       1      | M    |       1      |
-|   2007   |     9    | 台南市 | 中西區 | F    | 5-9    |       1      | NA   |      NA      |
-|   2008   |     1    | 台南市 | 南區   | F    | 30-34  |       1      | NA   |      NA      |
-|   2008   |    10    | 高雄市 | 楠梓區 | F    | 55-59  |       1      | NA   |      NA      |
-|   2008   |     3    | 新北市 | 林口區 | F    | 5-9    |       1      | NA   |      NA      |
-|   2008   |     8    | 高雄市 | 楠梓區 | F    | 65-69  |       2      | M    |       1      |
-|   2008   |     9    | 台中市 | 太平區 | F    | 50-54  |       1      | NA   |      NA      |
-|   2008   |     9    | 高雄市 | 鼓山區 | F    | 60-64  |       1      | NA   |      NA      |
-|   2009   |     1    | 新北市 | 永和區 | F    | 35-39  |       1      | NA   |      NA      |
-|   2009   |    12    | 台北市 | 萬華區 | F    | 25-29  |       1      | NA   |      NA      |
-|   2009   |    12    | 屏東縣 | 內埔鄉 | F    | 40-44  |       1      | NA   |      NA      |
-|   2009   |     4    | 台北市 | 松山區 | F    | 25-29  |       1      | NA   |      NA      |
-|   2009   |     8    | 高雄市 | 小港區 | F    | 65-69  |       2      | M    |       2      |
-|   2010   |    10    | 台南市 | 中西區 | F    | 40-44  |       2      | M    |       1      |
-|   2010   |    10    | 台南市 | 南區   | F    | 55-59  |       1      | M    |       3      |
-|   2010   |    10    | 高雄市 | 前金區 | F    | 5-9    |       1      | NA   |      NA      |
-|   2010   |    10    | 高雄市 | 苓雅區 | F    | 40-44  |       2      | M    |       1      |
-|   2010   |    10    | 高雄市 | 苓雅區 | F    | 45-49  |       1      | M    |       1      |
-|   2010   |    10    | 高雄市 | 新興區 | F    | 40-44  |       2      | M    |       1      |
-|   2010   |    11    | 台南市 | 東區   | F    | 50-54  |       1      | NA   |      NA      |
-|   2010   |    11    | 台南市 | 新營區 | F    | 25-29  |       1      | NA   |      NA      |
-|   2010   |    11    | 台南市 | 關廟區 | F    | 55-59  |       1      | NA   |      NA      |
-|   2010   |    11    | 高雄市 | 楠梓區 | F    | 25-29  |       1      | NA   |      NA      |
-|   2010   |    12    | 台南市 | 北區   | F    | 65-69  |       1      | NA   |      NA      |
-|   2010   |    12    | 高雄市 | 旗津區 | F    | 40-44  |       1      | NA   |      NA      |
-|   2010   |     8    | 台北市 | 松山區 | F    | 20-24  |       1      | NA   |      NA      |
-|   2010   |     9    | 台南市 | 中西區 | F    | 40-44  |       1      | NA   |      NA      |
-|   2004   |    12    | 屏東縣 | 屏東市 | F    | 50-54  |       2      | NA   |      NA      |
-|   2004   |    12    | 高雄市 | 大寮區 | F    | 45-49  |       1      | NA   |      NA      |
-|   2004   |     7    | 屏東縣 | 里港鄉 | F    | 30-34  |       1      | NA   |      NA      |
-|   2005   |    11    | 高雄市 | 大寮區 | F    | 30-34  |       1      | NA   |      NA      |
-|   2005   |     6    | 桃園市 | 平鎮區 | F    | 25-29  |       1      | NA   |      NA      |
-|   2006   |    10    | 基隆市 | 信義區 | F    | 35-39  |       1      | NA   |      NA      |
-|   2006   |    11    | 高雄市 | 苓雅區 | F    | 65-69  |       2      | NA   |      NA      |
-|   2006   |    11    | 高雄市 | 鳳山區 | F    | 50-54  |       1      | M    |       1      |
+    ## Warning: package 'ggmap' was built under R version 3.3.3
 
-探索式分析
-----------
+    ## Loading required package: ggplot2
+
+    ## Warning: package 'ggplot2' was built under R version 3.3.3
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap0<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2010, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2010, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap0
+```
+
+    ## Warning: Removed 456 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 456 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap1<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2011, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2011, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap1
+```
+
+    ## Warning: Removed 502 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 502 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-2.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap2<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2012, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2012, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap2
+```
+
+    ## Warning: Removed 412 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 412 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-3.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap3<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2013, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2013, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap3
+```
+
+    ## Warning: Removed 316 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 316 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-4.png)
+
+``` r
+densityMap4<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2014, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2014, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap4
+```
+
+    ## Warning: Removed 319 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 319 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-5.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap5<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2015, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2015, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap5
+```
+
+    ## Warning: Removed 336 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 336 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-6.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap6<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2016, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2016, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap6
+```
+
+    ## Warning: Removed 986 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 986 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-7.png)
+
+``` r
+Taiwanmap <- get_map(location = "Taiwan", zoom = 8)
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+
+``` r
+densityMap7<-ggmap(Taiwanmap,extent = "device")+ 
+  geom_density2d(data = MosIndex_Allc2017, aes(x = VillageLon, y = VillageLat), size = 0.3)+
+  stat_density2d(data = MosIndex_Allc2017, 
+                 aes(x = VillageLon, y = VillageLat, 
+                     fill = ..level.., alpha = ..level..), 
+                 size = 0.01, bins = 16, geom = "polygon") + 
+  scale_fill_gradient(low = "green", 
+                      high = "red", guide = FALSE) + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
+```
+
+    ## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+    ## instead
+
+``` r
+densityMap7
+```
+
+    ## Warning: Removed 263 rows containing non-finite values (stat_density2d).
+
+    ## Warning: Removed 263 rows containing non-finite values (stat_density2d).
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-8.png)
+
+資料處理與清洗、資料視覺化(99~106年高雄登革熱資料)
+--------------------------------------------------
 
 ``` r
 library(dplyr)
+MosIndex_Kaohsiungc<-select(MosIndex_Kaohsiung,Date:AreaType)
+MosIndex_Kaohsiungc2015<-MosIndex_Kaohsiungc[grepl("2015",MosIndex_Kaohsiungc$Date),]
+MosIndex_Kaohsiungc2016<-MosIndex_Kaohsiungc[grepl("2016",MosIndex_Kaohsiungc$Date),]
+library(ggmap)
+khcmap <- get_map(location ='Kaohsiung', 
+                 zoom = 10,
+                 language = "zh-TW", maptype = 'roadmap')
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Kaohsiung&zoom=10&size=640x640&scale=2&maptype=roadmap&language=zh-TW&sensor=false
+
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Kaohsiung&sensor=false
+
+``` r
+khcmap1 <- ggmap(khcmap)+ 
+  geom_point(data=MosIndex_Kaohsiungc, 
+             aes(x=VillageLon, y=VillageLat),colour="red")
+khcmap1
+```
+
+    ## Warning: Removed 284 rows containing missing values (geom_point).
+
+![](README_files/figure-markdown_github/unnamed-chunk-3-1.png) \#\#資料處理與清洗、資料視覺化(104年高雄各地區各月份病例資料)
+
+``` r
+X104dengueinfectionC<-select(X104dengueinfection,行政區:`12月`)
 library(reshape2)
 ```
 
     ## Warning: package 'reshape2' was built under R version 3.3.3
 
 ``` r
-b<-group_by(Age_County_Gender_061,.dots=發病月份) %>%
-  summarise(病例=sum(確定病例數)) %>%
-  arrange(desc(病例))
-
-c<-group_by(Age_County_Gender_061,.dots=縣市) %>%
- summarise(病例=sum(確定病例數)) %>%
- arrange(desc(病例))
-group_by(a,.dots=縣市) %>%
-  summarise(女生病例=sum(確定病例數.x,na.rm=T),男生病例=sum(確定病例數.y,na.rm=T)) %>%
-  arrange(desc(女生病例),desc(男生病例))
+X104dengueinfectionM<-melt(X104dengueinfectionC,id.vars = "行政區")
+X104dengueinfectionM1<-X104dengueinfectionM[grepl("區",X104dengueinfectionM$行政區),]
+#104年各月份高雄地區的病例數
+test<-group_by(X104dengueinfectionM1,variable) %>%
+  summarise(次數=sum(value,na.rm=T))%>%
+  arrange(desc(次數))
+test
 ```
 
-    ## # A tibble: 22 × 3
-    ##     .dots 女生病例 男生病例
-    ##    <fctr>    <int>    <int>
-    ## 1  高雄市    21293    20325
-    ## 2  台南市    13419    13281
-    ## 3  屏東縣      864      899
-    ## 4  台北市      319      387
-    ## 5  新北市      299      335
-    ## 6  台中市      187      262
-    ## 7  桃園市      186      252
-    ## 8  彰化縣       72       87
-    ## 9  澎湖縣       67       70
-    ## 10 新竹縣       54       60
-    ## # ... with 12 more rows
+    ## # A tibble: 12 × 2
+    ##    variable  次數
+    ##      <fctr> <int>
+    ## 1      11月  8909
+    ## 2      10月  5139
+    ## 3      12月  2953
+    ## 4       9月  2112
+    ## 5       8月   440
+    ## 6       1月    70
+    ## 7       6月    31
+    ## 8       7月    29
+    ## 9       5月    18
+    ## 10      2月    10
+    ## 11      3月     7
+    ## 12      4月     5
 
 ``` r
-library(datasets) 
-library(dplyr)
-#install.packages("ggplot2")
-library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 3.3.3
-
-``` r
-ggplot()+geom_bar(data=b,aes(x= .dots,y= 病例),
+ggplot()+geom_bar(data=test,aes(x= variable,y= 次數),
                   stat = "identity")+xlab("月份")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ``` r
-ggplot()+geom_bar(data=c,aes(x= .dots,y= 病例),
-                  stat = "identity")+xlab("縣市")
+#104年高雄各地區的總病例
+test1<-group_by(X104dengueinfectionM1,.dots=行政區) %>%
+ summarise(病例=sum(value,na.rm=T)) %>%
+    arrange(desc(病例))
+test1<-rename(test1,site_id=.dots)
+test1
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-3-2.png)
+    ## # A tibble: 36 × 2
+    ##    site_id  病例
+    ##      <chr> <int>
+    ## 1   三民區  4692
+    ## 2   前鎮區  2722
+    ## 3   鳳山區  2512
+    ## 4   苓雅區  2257
+    ## 5   鼓山區  1380
+    ## 6   左營區  1288
+    ## 7   小港區   913
+    ## 8   楠梓區   630
+    ## 9   新興區   473
+    ## 10  前金區   324
+    ## # ... with 26 more rows
+
+資料處理與清洗、資料視覺化(台南市、高雄市、屏東縣快篩診所資料)
+--------------------------------------------------------------
+
+``` r
+ns1hosp_20160603K<- ns1hosp_20160603[grep("高雄市",ns1hosp_20160603$city),]
+#登革熱快篩所與病例分布
+library(ggmap)
+Kaohsiungmap <- get_map(location = "Kaohsiung", zoom = 10,
+                        language = "zh-TW", maptype = "roadmap")
+```
+
+    ## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Kaohsiung&zoom=10&size=640x640&scale=2&maptype=roadmap&language=zh-TW&sensor=false
+
+    ## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Kaohsiung&sensor=false
+
+``` r
+#紅色是病例，綠色是快篩所
+Kaohsiungmap0 <- ggmap(Kaohsiungmap)+ 
+  geom_point(data=MosIndex_Kaohsiungc2015, 
+             aes(x = VillageLon, y = VillageLat),
+             colour="red",size=1.2)+
+  geom_point(data=ns1hosp_20160603K, 
+             aes(x = lng, y = lat),
+             colour="green",size=1.2)
+Kaohsiungmap0
+```
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](README_files/figure-markdown_github/unnamed-chunk-5-1.png) \#\#資料處理與清洗、資料視覺化(104年全台各鄉鎮市區人口密度)
+
+``` r
+opendata104N010C<-opendata104N010[grepl("高雄市",opendata104N010$site_id),]
+opendata104N010C<-opendata104N010C[complete.cases(opendata104N010C$statistic_yyy),]
+opendata104N010C$site_id<-substr(opendata104N010C$site_id,start = 4,stop = 7)
+a<-full_join(opendata104N010C,test1,by="site_id")
+a<-mutate(a,盛行率=病例/as.numeric(people_total))
+```
