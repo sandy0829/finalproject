@@ -1,0 +1,16 @@
+"0","library(dplyr)"
+"0","MosIndex_Kaohsiungc<-select(MosIndex_Kaohsiung,Date:AreaType)"
+"0","MosIndex_Kaohsiungc2015<-MosIndex_Kaohsiungc[grepl(""2015"",MosIndex_Kaohsiungc$Date),]"
+"0","MosIndex_Kaohsiungc2016<-MosIndex_Kaohsiungc[grepl(""2016"",MosIndex_Kaohsiungc$Date),]"
+"0","library(ggmap)"
+"0","khcmap <- get_map(location ='Kaohsiung', "
+"0","                 zoom = 10,"
+"0","                 language = ""zh-TW"", maptype = 'roadmap')"
+"2","Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Kaohsiung&zoom=10&size=640x640&scale=2&maptype=roadmap&language=zh-TW&sensor=false
+"
+"2","Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Kaohsiung&sensor=false
+"
+"0","khcmap1 <- ggmap(khcmap)+ "
+"0","  geom_point(data=MosIndex_Kaohsiungc, "
+"0","             aes(x=VillageLon, y=VillageLat),colour=""red"")"
+"0","khcmap1"

@@ -1,0 +1,17 @@
+"0","X104dengueinfectionC<-select(X104dengueinfection,行政區:`12月`)"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"
+"0","library(reshape2)"
+"2","package ��reshape2�� was built under R version 3.3.3"
+"0","X104dengueinfectionM<-melt(X104dengueinfectionC,id.vars = ""行政區"")"
+"0","X104dengueinfectionM1<-X104dengueinfectionM[grepl(""區"",X104dengueinfectionM$行政區),]"
+"0","test1<-group_by(X104dengueinfectionM1,.dots=行政區) %>%"
+"0"," summarise(病例=sum(value,na.rm=T)) %>%"
+"0","    arrange(desc(病例))"
+"0","test1<-rename(test1,site_id=.dots)"
+"0","test1"

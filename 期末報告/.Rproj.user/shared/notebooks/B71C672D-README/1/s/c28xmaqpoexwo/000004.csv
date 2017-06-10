@@ -1,0 +1,12 @@
+"0","opendata104N010C<-opendata104N010[grepl(""高雄市"",opendata104N010$site_id),]"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"
+"0","opendata104N010C<-opendata104N010C[complete.cases(opendata104N010C$statistic_yyy),]"
+"0","opendata104N010C$site_id<-substr(opendata104N010C$site_id,start = 4,stop = 7)"
+"0","a<-full_join(opendata104N010C,test1,by=""site_id"")"
+"0","a<-mutate(a,盛行率=病例/as.numeric(people_total))"

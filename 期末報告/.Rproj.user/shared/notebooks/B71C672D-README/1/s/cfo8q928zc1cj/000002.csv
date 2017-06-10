@@ -1,0 +1,25 @@
+"0","ns1hosp_20160603K<- ns1hosp_20160603[grep(""高雄市"",ns1hosp_20160603$city),]"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"
+"0","#登革熱快篩所與病例分布"
+"0","library(ggmap)"
+"0","Kaohsiungmap <- get_map(location = ""Kaohsiung"", zoom = 10,"
+"0","                        language = ""zh-TW"", maptype = ""roadmap"")"
+"2","Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Kaohsiung&zoom=10&size=640x640&scale=2&maptype=roadmap&language=zh-TW&sensor=false
+"
+"2","Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Kaohsiung&sensor=false
+"
+"0","#紅色是病例，綠色是快篩所"
+"0","Kaohsiungmap0 <- ggmap(Kaohsiungmap)+ "
+"0","  geom_point(data=MosIndex_Kaohsiungc2015, "
+"0","             aes(x = VillageLon, y = VillageLat),"
+"0","             colour=""red"",size=1.2)+"
+"0","  geom_point(data=ns1hosp_20160603K, "
+"0","             aes(x = lng, y = lat),"
+"0","             colour=""green"",size=1.2)"
+"0","Kaohsiungmap0"

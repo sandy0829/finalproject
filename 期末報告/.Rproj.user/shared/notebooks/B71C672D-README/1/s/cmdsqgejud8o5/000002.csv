@@ -1,0 +1,63 @@
+"0","#é€™æ˜¯R Code Chunk"
+"0","library(dplyr)"
+"2","package ¡¥dplyr¡¦ was built under R version 3.3.3"
+"2","
+Attaching package: ¡¥dplyr¡¦
+
+"
+"2","The following objects are masked from ¡¥package:stats¡¦:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ¡¥package:base¡¦:
+
+    intersect, setdiff, setequal, union
+
+"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"
+"0","MosIndex_Allc<-select(MosIndex_All,Date:AreaType)"
+"0","MosIndex_Allc<-MosIndex_Allc[complete.cases(MosIndex_Allc),]"
+"0","MosIndex_Allc$VillageLon<-as.numeric(MosIndex_Allc$VillageLon)"
+"2","NAs introduced by coercion"
+"0","MosIndex_Allc$VillageLat<-as.numeric(MosIndex_Allc$VillageLat)"
+"2","NAs introduced by coercion"
+"0","MosIndex_Allc2010<-MosIndex_Allc[grepl(""2010"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2011<-MosIndex_Allc[grepl(""2011"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2012<-MosIndex_Allc[grepl(""2012"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2013<-MosIndex_Allc[grepl(""2013"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2014<-MosIndex_Allc[grepl(""2014"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2015<-MosIndex_Allc[grepl(""2015"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2016<-MosIndex_Allc[grepl(""2016"",MosIndex_Allc$Date),]"
+"0","MosIndex_Allc2017<-MosIndex_Allc[grepl(""2017"",MosIndex_Allc$Date),]"
+"0","library(ggmap)"
+"2","package ¡¥ggmap¡¦ was built under R version 3.3.3"
+"2","Loading required package: ggplot2
+"
+"2","package ¡¥ggplot2¡¦ was built under R version 3.3.3"
+"2","Google Maps API Terms of Service: http://developers.google.com/maps/terms.
+"
+"2","Please cite ggmap if you use it: see citation('ggmap') for details.
+"
+"0","Taiwanmap <- get_map(location = ""Taiwan"", zoom = 8)"
+"2","Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Taiwan&zoom=8&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+"
+"2","Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Taiwan&sensor=false
+"
+"0","densityMap0<-ggmap(Taiwanmap,extent = ""device"")+ "
+"0","  geom_density2d(data = MosIndex_Allc2010, aes(x = VillageLon, y = VillageLat), size = 0.3)+"
+"0","  stat_density2d(data = MosIndex_Allc2010, "
+"0","                 aes(x = VillageLon, y = VillageLat, "
+"0","                     fill = ..level.., alpha = ..level..), "
+"0","                 size = 0.01, bins = 16, geom = ""polygon"") + "
+"0","  scale_fill_gradient(low = ""green"", "
+"0","                      high = ""red"", guide = FALSE) + "
+"0","  scale_alpha(range = c(0, 0.3), guide = FALSE)"
+"2","`panel.margin` is deprecated. Please use `panel.spacing` property instead"
+"0","densityMap0"
