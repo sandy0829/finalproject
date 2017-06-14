@@ -1,27 +1,26 @@
 ---
-title: "å°ç£å„åœ°å€ç™»é©ç†±åˆ†æ"
+title: "?°?£??„åœ°??€?™»?©?†±??†æ??"
 output: github_document
 ---
 
-##è®€å…¥è³‡æ–™
+##Åª¤J¸ê®Æ
 ```{r}
-#é€™æ˜¯R Code Chunk
+#³o¬OR Code Chunk
 library(readr)
-#99~106å¹´é«˜é›„ç™»é©ç†±è³‡æ–™
+#99~106¦~°ª¶¯µn­²¼ö¸ê®Æ
 MosIndex_Kaohsiung <- read_csv("C:/Users/user/Downloads/MosIndex_Kaohsiung.csv")
-#104å¹´é«˜é›„å„åœ°å€å„æœˆä»½ç—…ä¾‹è³‡æ–™
+#104¦~°ª¶¯¦U¦a°Ï¦U¤ë¥÷¯f¨Ò¸ê®Æ
 X104dengueinfection <- read_csv("C:/Users/user/Downloads/104dengueinfection.csv")
-#å°å—å¸‚ã€é«˜é›„å¸‚ã€å±æ±ç¸£å¿«ç¯©è¨ºæ‰€è³‡æ–™
+#¥x«n¥«¡B°ª¶¯¥«¡B«ÌªF¿¤§Ö¿z¶E©Ò¸ê®Æ
 ns1hosp_20160603 <- read_csv("C:/Users/user/Downloads/ns1hosp_20160603.csv")
-#99~106å¹´å…¨å°ç™»é©ç†±è³‡æ–™
+#99~106¦~¥ş¥xµn­²¼ö¸ê®Æ
 MosIndex_All <- read_csv("C:/Users/user/Downloads/MosIndex_All.csv")
-#104å¹´å…¨å°å„é„‰é®å¸‚å€äººå£å¯†åº¦
+#104¦~¥ş¥x¦U¶mÂí¥«°Ï¤H¤f±K«×
 opendata104N010 <- read_csv("C:/Users/user/Downloads/opendata104N010.csv")
 ```
-
-##è³‡æ–™è™•ç†èˆ‡æ¸…æ´—ã€è³‡æ–™è¦–è¦ºåŒ–(99~106å¹´å…¨å°ç™»é©ç†±è³‡æ–™)
+##¸ê®Æ³B²z»P²M¬~¡B¸ê®ÆµøÄ±¤Æ(99~106¦~¥ş¥xµn­²¼ö¸ê®Æ)
 ```{r}
-#é€™æ˜¯R Code Chunk
+#³o¬OR Code Chunk
 library(dplyr)
 MosIndex_Allc<-select(MosIndex_All,Date:AreaType)
 MosIndex_Allc<-MosIndex_Allc[complete.cases(MosIndex_Allc),]
@@ -125,7 +124,7 @@ densityMap7<-ggmap(Taiwanmap,extent = "device")+
 densityMap7
 ```
 
-##è³‡æ–™è™•ç†èˆ‡æ¸…æ´—ã€è³‡æ–™è¦–è¦ºåŒ–(99~106å¹´é«˜é›„ç™»é©ç†±è³‡æ–™)
+##¸ê®Æ³B²z»P²M¬~¡B¸ê®ÆµøÄ±¤Æ(99~106¦~°ª¶¯µn­²¼ö¸ê®Æ)
 ```{r}
 library(dplyr)
 MosIndex_Kaohsiungc<-select(MosIndex_Kaohsiung,Date:AreaType)
@@ -140,34 +139,34 @@ khcmap1 <- ggmap(khcmap)+
              aes(x=VillageLon, y=VillageLat),colour="red")
 khcmap1
 ```
-##è³‡æ–™è™•ç†èˆ‡æ¸…æ´—ã€è³‡æ–™è¦–è¦ºåŒ–(104å¹´é«˜é›„å„åœ°å€å„æœˆä»½ç—…ä¾‹è³‡æ–™)
+##¸ê®Æ³B²z»P²M¬~¡B¸ê®ÆµøÄ±¤Æ(104¦~°ª¶¯¦U¦a°Ï¦U¤ë¥÷¯f¨Ò¸ê®Æ)
 ```{r}
-X104dengueinfectionC<-select(X104dengueinfection,è¡Œæ”¿å€:`12æœˆ`)
+X104dengueinfectionC<-select(X104dengueinfection,¦æ¬F°Ï:`12¤ë`)
 library(reshape2)
-X104dengueinfectionM<-melt(X104dengueinfectionC,id.vars = "è¡Œæ”¿å€")
-X104dengueinfectionM1<-X104dengueinfectionM[grepl("å€",X104dengueinfectionM$è¡Œæ”¿å€),]
-#104å¹´å„æœˆä»½é«˜é›„åœ°å€çš„ç—…ä¾‹æ•¸
+X104dengueinfectionM<-melt(X104dengueinfectionC,id.vars = "¦æ¬F°Ï")
+X104dengueinfectionM1<-X104dengueinfectionM[grepl("°Ï",X104dengueinfectionM$¦æ¬F°Ï),]
+#104¦~¦U¤ë¥÷°ª¶¯¦a°Ïªº¯f¨Ò¼Æ
 test<-group_by(X104dengueinfectionM1,variable) %>%
-  summarise(æ¬¡æ•¸=sum(value,na.rm=T))%>%
-  arrange(desc(æ¬¡æ•¸))
+  summarise(¦¸¼Æ=sum(value,na.rm=T))%>%
+  arrange(desc(¦¸¼Æ))
 test
-ggplot()+geom_bar(data=test,aes(x= variable,y= æ¬¡æ•¸),
-                  stat = "identity")+xlab("æœˆä»½")
-#104å¹´é«˜é›„å„åœ°å€çš„ç¸½ç—…ä¾‹
-test1<-group_by(X104dengueinfectionM1,.dots=è¡Œæ”¿å€) %>%
- summarise(ç—…ä¾‹=sum(value,na.rm=T)) %>%
-    arrange(desc(ç—…ä¾‹))
+ggplot()+geom_bar(data=test,aes(x= variable,y= ¦¸¼Æ),
+                  stat = "identity")+xlab("¤ë¥÷")
+#104¦~°ª¶¯¦U¦a°ÏªºÁ`¯f¨Ò
+test1<-group_by(X104dengueinfectionM1,.dots=¦æ¬F°Ï) %>%
+ summarise(¯f¨Ò=sum(value,na.rm=T)) %>%
+    arrange(desc(¯f¨Ò))
 test1<-rename(test1,site_id=.dots)
 test1
 ```
-##è³‡æ–™è™•ç†èˆ‡æ¸…æ´—ã€è³‡æ–™è¦–è¦ºåŒ–(å°å—å¸‚ã€é«˜é›„å¸‚ã€å±æ±ç¸£å¿«ç¯©è¨ºæ‰€è³‡æ–™)
+##¸ê®Æ³B²z»P²M¬~¡B¸ê®ÆµøÄ±¤Æ(¥x«n¥«¡B°ª¶¯¥«¡B«ÌªF¿¤§Ö¿z¶E©Ò¸ê®Æ)
 ```{r}
-ns1hosp_20160603K<- ns1hosp_20160603[grep("é«˜é›„å¸‚",ns1hosp_20160603$city),]
-#ç™»é©ç†±å¿«ç¯©æ‰€èˆ‡ç—…ä¾‹åˆ†å¸ƒ
+ns1hosp_20160603K<- ns1hosp_20160603[grep("°ª¶¯¥«",ns1hosp_20160603$city),]
+#µn­²¼ö§Ö¿z©Ò»P¯f¨Ò¤À¥¬
 library(ggmap)
 Kaohsiungmap <- get_map(location = "Kaohsiung", zoom = 10,
                         language = "zh-TW", maptype = "roadmap")
-#ç´…è‰²æ˜¯ç—…ä¾‹ï¼Œç¶ è‰²æ˜¯å¿«ç¯©æ‰€
+#¬õ¦â¬O¯f¨Ò¡Aºñ¦â¬O§Ö¿z©Ò
 Kaohsiungmap0 <- ggmap(Kaohsiungmap)+ 
   geom_point(data=MosIndex_Kaohsiungc2015, 
              aes(x = VillageLon, y = VillageLat),
@@ -177,11 +176,11 @@ Kaohsiungmap0 <- ggmap(Kaohsiungmap)+
              colour="green",size=1.2)
 Kaohsiungmap0
 ```
-##è³‡æ–™è™•ç†èˆ‡æ¸…æ´—ã€è³‡æ–™è¦–è¦ºåŒ–(104å¹´å…¨å°å„é„‰é®å¸‚å€äººå£å¯†åº¦)
+##¸ê®Æ³B²z»P²M¬~¡B¸ê®ÆµøÄ±¤Æ(104¦~¥ş¥x¦U¶mÂí¥«°Ï¤H¤f±K«×)
 ```{r}
-opendata104N010C<-opendata104N010[grepl("é«˜é›„å¸‚",opendata104N010$site_id),]
+opendata104N010C<-opendata104N010[grepl("°ª¶¯¥«",opendata104N010$site_id),]
 opendata104N010C<-opendata104N010C[complete.cases(opendata104N010C$statistic_yyy),]
 opendata104N010C$site_id<-substr(opendata104N010C$site_id,start = 4,stop = 7)
 a<-full_join(opendata104N010C,test1,by="site_id")
-a<-mutate(a,ç››è¡Œç‡=ç—…ä¾‹/as.numeric(people_total))
+a<-mutate(a,²±¦æ²v=¯f¨Ò/as.numeric(people_total))
 ```
